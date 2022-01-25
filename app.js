@@ -29,6 +29,9 @@ let mistakes = 0;
 let maxMistakes = 6;
 let answer = '';
 let wordToGuess = null
+letWordToGuess = ''
+let result = ''
+
 
 function fillKeyboard() {
     letters.forEach((letter) => {
@@ -40,8 +43,7 @@ function fillKeyboard() {
 }
 
 function displayWordToGuess(){
-    let result = ''
-    for(let i = 0; i < wordToGuess.length; i++) result+=" __ "
+    for(let i = 0; i < wordToGuess.length; i++) result+="_"
     document.getElementById('wordToGuess').innerHTML+= result;
 }
 
@@ -50,17 +52,43 @@ function pickRandomWord(){
     document.getElementById('topicName').innerHTML = question.topic;
     let words = question.words;
     wordToGuess = words[Math.floor(Math.random()*words.length)];
+    wordToGuessCopy = wordToGuess;
     // document.getElementById('wordToGuess').innerHTML = word;
     displayWordToGuess();
 }
 
+
+function replace1(letter) {
+    console.log(letter)
+    let rez = ''
+    for(let i = 0; i < wordToGuess.length; i++) {
+        if (result.charAt(i) == '_' && wordToGuess.charAt(i) == letter) {
+            console.log(result.substring(0, i))
+            console.log(result.substring(i+1))
+            rez = result.substring(0, i) + letter + result.substring(i+1);
+            result = rez
+            console.log(result)
+            document.getElementById('wordToGuess').innerHTML = result;
+            return;
+        };
+    }
+}
+
 let rez = ''
+
+
 function pickLetter(letter, button){
-    if(wordToGuess.includes(letter)){
-        rez += letter
-        console.log(rez)
-        console.log()
-        if(rez == wordToGuess){
+    if(wordToGuessCopy.includes(letter)){
+        console.log(letter)
+        console.log((wordToGuessCopy) + ' kopija');
+        console.log(wordToGuess);
+        wordToGuessCopy = wordToGuessCopy.replace(letter, '');
+        console.log((wordToGuessCopy) + ' kopija1');
+        replace1(letter);
+        rez += letter;
+        // console.log(rez);
+        // console.log();
+        if(compareStrings(rez, wordToGuess)){
             let success = `<div class="alert alert-success mt-5" role="alert">
                     <b>Congrats!</b> 
                   </div>`
@@ -90,6 +118,29 @@ function endGame(){
     let buttons = document.getElementsByClassName('letter')
     for(let i = 0; i < buttons.length; i++){
         buttons[i].classList.add('disabled')
+    }
+}
+
+function compareStrings(s1, s2){
+    let rez = true
+    let s1copy = s1
+    let s2copy = s2
+    if(s1.length != s2.length) rez =  false;
+    console.log("string s1 " + s1)
+    if(s1.includes('_')) rez = false;
+
+    else{
+        for(let i = 0; i < s1.length; i++){
+            let char = s1copy.charAt(i)
+            if(!s2copy.includes(char)){
+                rez = false;
+            }
+            else{
+                s2copy.replace(char, '')
+                s1copy.replace(char, '')
+            }
+        }
+        return rez;
     }
 }
 
